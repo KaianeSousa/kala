@@ -30,15 +30,22 @@ class NotificationSystem:
         self._service.send(recipient, message)
 
 # Demonstração do uso do Adapter
-if _name_ == "_main_":
+def main():
     # Usando o EmailService diretamente
     email_service = EmailService()
-    notification_system_email = NotificationSystem(email_service)
-    notification_system_email.notify("john.doe@example.com", "Olá John!")
+    class EmailNotificationService(NotificationService):
+        def send(self, recipient: str, message: str):
+            email_service.send_email(recipient, message)
+
+    email_notification_service = EmailNotificationService()
+    email_notification_system = NotificationSystem(email_notification_service)
+    email_notification_system.notify("cris.dover@example.com", "Olá Cris!")
 
     # Usando o SMSService com o Adapter
     sms_service = SMSService()
     sms_adapter = SMSAdapter(sms_service)
-    notification_system_sms = NotificationSystem(sms_adapter)
-    
-    notification_system_sms.notify("1234567890", "Olá, este é um SMS!")
+    sms_notification_system = NotificationSystem(sms_adapter)
+    sms_notification_system.notify("1234567890", "Olá, este é um SMS!")
+
+if __name__ == "__main__":
+    main().notify("1234567890", "Olá, este é um SMS!")
